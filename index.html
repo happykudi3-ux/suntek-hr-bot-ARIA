@@ -1,1 +1,342 @@
+Aria suntek hr chatbot · HTML
+Copy
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ARIA — Suntek AI HR Assistant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#08111f;font-family:'DM Sans',sans-serif}
+.root{display:flex;flex-direction:column;height:100vh;max-width:760px;margin:0 auto;background:#08111f;border-left:1px solid rgba(0,200,150,0.1);border-right:1px solid rgba(0,200,150,0.1)}
+ 
+/* HEADER */
+.hdr{background:#0d1b2a;border-bottom:1px solid rgba(0,200,150,0.12);padding:14px 18px 12px;flex-shrink:0}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.bot-av{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#00c896,#009e78);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 20px rgba(0,200,150,0.3)}
+.bot-av svg{width:27px;height:27px}
+.bot-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#e2f0eb;letter-spacing:.01em}
+.bot-sub{font-size:11px;color:#4d9177;margin-top:3px;display:flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:#00c896;box-shadow:0 0 7px #00c896;animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid rgba(0,200,150,0.2);background:rgba(0,200,150,0.07);color:#6dbfa3;cursor:pointer;transition:all .2s;white-space:nowrap;user-select:none}
+.pill:hover{background:rgba(0,200,150,0.16);border-color:rgba(0,200,150,0.4);color:#9adbc3}
+ 
+/* MESSAGES */
+.msgs{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:12px}
+.msgs::-webkit-scrollbar{width:3px}
+.msgs::-webkit-scrollbar-thumb{background:rgba(0,200,150,0.2);border-radius:3px}
+.row{display:flex;gap:8px;align-items:flex-end;animation:fu .28s ease}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.row.u{flex-direction:row-reverse}
+.av-sm{width:28px;height:28px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;letter-spacing:.02em}
+.av-sm.b{background:linear-gradient(135deg,#00c896,#009e78)}
+.av-sm.ua{background:linear-gradient(135deg,#4a7aff,#2a55d0)}
+.bubble{max-width:78%;padding:10px 14px;border-radius:13px;font-size:13.5px;line-height:1.6;word-break:break-word}
+.bubble.b{background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,150,0.1);color:#c0e0d5;border-bottom-left-radius:3px;white-space:pre-wrap}
+.bubble.u{background:rgba(74,122,255,0.2);border:1px solid rgba(74,122,255,0.22);color:#c8d6ff;border-bottom-right-radius:3px}
+.bubble.err{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.22);color:#ffb3b3;white-space:pre-wrap}
+.dots{display:flex;gap:5px;align-items:center;padding:3px 0}
+.dots span{width:7px;height:7px;border-radius:50%;background:#00c896;opacity:.4;animation:db 1.1s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
+ 
+/* SUGGESTIONS */
+.suggs{padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,0.04);flex-shrink:0}
+.sb{font-size:11.5px;padding:5px 11px;border-radius:20px;border:1px solid rgba(74,122,255,0.22);background:rgba(74,122,255,0.07);color:#7f9fff;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.sb:hover{background:rgba(74,122,255,0.16);color:#afc0ff;border-color:rgba(74,122,255,0.4)}
+ 
+/* INPUT */
+.inp-row{padding:11px 16px 14px;border-top:1px solid rgba(255,255,255,0.05);background:#0b141f;display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.inp{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,150,0.14);border-radius:11px;padding:10px 13px;font-size:13.5px;color:#ccead8;font-family:'DM Sans',sans-serif;resize:none;outline:none;min-height:42px;max-height:96px;transition:border-color .2s;line-height:1.5}
+.inp::placeholder{color:rgba(100,180,150,0.3)}
+.inp:focus{border-color:rgba(0,200,150,0.35)}
+.send-btn{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#00c896,#009e78);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(0,200,150,0.22);transition:all .2s;flex-shrink:0}
+.send-btn:hover{transform:scale(1.07);box-shadow:0 0 22px rgba(0,200,150,0.4)}
+.send-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.footer{padding:6px 16px 9px;text-align:center;font-size:10.5px;color:rgba(70,120,100,.35);background:#0b141f;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="root">
+ 
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="bot-av">
+        <svg viewBox="0 0 26 26" fill="none">
+          <rect x="7" y="10" width="12" height="11" rx="3" fill="rgba(255,255,255,0.93)"/>
+          <rect x="10" y="13" width="2.5" height="2.5" rx="1" fill="#009e78"/>
+          <rect x="13.5" y="13" width="2.5" height="2.5" rx="1" fill="#009e78"/>
+          <rect x="11" y="17" width="4" height="1.5" rx=".75" fill="#009e78"/>
+          <rect x="11.5" y="7" width="3" height="3" rx="1.5" fill="rgba(255,255,255,0.93)"/>
+          <line x1="13" y1="7" x2="13" y2="10" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
+          <rect x="4.5" y="12" width="2.5" height="5" rx="1.25" fill="rgba(255,255,255,0.7)"/>
+          <rect x="19" y="12" width="2.5" height="5" rx="1.25" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+      </div>
+      <div>
+        <div class="bot-name">ARIA — Suntek AI HR Assistant</div>
+        <div class="bot-sub"><span class="dot"></span>Online &nbsp;·&nbsp; Powered by Claude AI</div>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill" onclick="quickAsk('What should I do in my first 48 hours at Suntek AI?')">📋 Onboarding Guide</span>
+      <span class="pill" onclick="quickAsk('Explain the complete leave policy — PL, SL, CL, LWP.')">📅 Leave Policy 2026</span>
+      <span class="pill" onclick="quickAsk('What are my maternity leave entitlements?')">🤱 Maternity Benefit Act</span>
+      <span class="pill" onclick="quickAsk('How do I submit an expense claim for ChatGPT or Cursor?')">💰 Expense Claims</span>
+    </div>
+  </div>
+ 
+  <div class="msgs" id="msgs"></div>
+ 
+  <div class="suggs">
+    <button class="sb" onclick="quickAsk('When is salary disbursed each month?')">When is salary paid?</button>
+    <button class="sb" onclick="quickAsk('How many privilege leave days do I get per year?')">PL days?</button>
+    <button class="sb" onclick="quickAsk('How do I contact the HR team?')">Contact HR?</button>
+    <button class="sb" onclick="quickAsk('What is the BYOD and Wi-Fi reimbursement policy?')">BYOD policy?</button>
+    <button class="sb" onclick="quickAsk('Can I carry forward unused leaves?')">Leave carry-forward?</button>
+  </div>
+ 
+  <div class="inp-row">
+    <textarea class="inp" id="inp" placeholder="Ask about leaves, payroll, onboarding, expenses…" rows="1"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="send()">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
+        <path d="M1.5 8L14 2L9.5 8L14 14L1.5 8Z" fill="white"/>
+      </svg>
+    </button>
+  </div>
+  <div class="footer">ARIA v1.0 · Suntek AI Internal HR Assistant · Answers based on official company policy documents</div>
+ 
+</div>
+ 
+<script>
+const SYS = `You are ARIA, the official internal HR Assistant for Suntek AI. You answer employee questions warmly, clearly, and concisely — strictly based on the four company documents below. Use bullet points where helpful. Never make up information. If a topic isn't covered, say so and refer the employee to khushi@suntek.ai.
+ 
+=== EXPENSE CLAIM HANDBOOK ===
+How to claim expenses (ChatGPT / Cursor subscriptions):
+- Step 1: Go to HRMS portal → Expense Claim (left panel)
+- Step 2: Click New Claim
+- Step 3: Click Create Claim
+- Step 4: Fill in details using your official company email ID
+- Step 5: Upload invoice copy and send for approval
+Important: Submit by the 20th of the month. Reimbursement is processed the following month.
+ 
+=== MATERNITY BENEFIT ACT 2017 (India) ===
+- 26 weeks paid leave for 1st and 2nd child. Up to 8 weeks can be taken before delivery.
+- 12 weeks for 3rd or subsequent pregnancy.
+- 12 weeks for adoptive mothers (from day child is handed over).
+- 12 weeks for miscarriage or medical termination (medical proof required).
+- Eligibility: Must have worked 160 days in the 12 months before expected delivery.
+- Payment: Full salary at average daily wage rate.
+- Employers with 50+ employees must provide crèche (childcare) facilities.
+- Employees can visit crèche up to 4 times a day.
+- Work-from-home can be extended post-leave by mutual agreement.
+- Employers CANNOT dismiss/fire an employee on maternity leave — it is a punishable offence.
+- Leave can be extended beyond the standard duration by mutual agreement.
+ 
+=== SUNTEK AI NEW EMPLOYEE ONBOARDING GUIDE ===
+About Suntek AI:
+- Profitable and unfunded self-sustaining tech startup.
+- HQ: New Jersey. Core product team: India. Operates across time zones.
+- Clients/partners: Myntra, Miracle, Bambi Baby, The Outset (Scarlett Johansson brand).
+- Founders: Faisal Shakeel and Vedang Singh.
+ 
+Team members: Manav Goel (Marketing Manager), Suman Saha (Lead Web Developer), Khushi Ash (Assistant Manager HR), Rahul Bhatt (Associate PM), Suhita Paik (Senior PM), Ashwin Tyagi (Assistant Manager), Apralim Mahata (Junior Developer), Madhushree BJ (UI/UX Head), Soumya Kanta M. (Head of Ecommerce), Shubham Pandey (Junior Software Developer), Hrithik Singh (Associate PM), Mohan Nandana (Web Analyst).
+ 
+First 48 Hours:
+1. Get Your Credentials — HR gives official email ID and Slack access on or before Day 1.
+2. Complete Your Profile — Fill personal and bank details in HRMS for payroll setup.
+3. Meet Your Manager — Manager contacts you once accounts are active to share tasks and expectations.
+ 
+Required onboarding info: Full Name & Contact, Date of Birth, Emergency Contact, Blood Group, Permanent Address, Bank Details for Salary.
+ 
+Payroll: Disbursed between the 1st and 5th of each month.
+ 
+Work Schedule:
+- Core days: Monday to Friday. Occasional Saturdays may be required for critical deadlines.
+- Flexible hours — focus is on results and communication, not just clock hours.
+- Founders and team members may work unconventional hours.
+ 
+Attendance: Tracked via designated physical or digital systems (start and end times daily).
+ 
+Infrastructure / BYOD Policy:
+- Employees use personal laptops (Bring Your Own Device).
+- Device purchase, maintenance, and repair costs are NOT reimbursed.
+- Stable Wi-Fi is required. Wi-Fi expenses are NOT reimbursed.
+ 
+Communication:
+- Work/performance queries → Contact your immediate manager.
+- HR queries (salary, bank details, HRMS, leave, documentation) → Email ONLY.
+  - WhatsApp or informal messages are discouraged.
+  - HR responds within 24 hours typically.
+- HR Team: Khushi Ash — khushi@suntek.ai | Rashmi — rshmi.s@suntek.ai
+ 
+Leave Summary at Suntek AI:
+- Privilege Leave (PL): 12 days/year. Available after 3-month probation. For planned vacations. Longer leave possible after 10-12 months with approval.
+- Sick Leave (SL): 6 days/year. Available from Day 1. For illness, medical emergencies, or critical tasks like passport renewal.
+- Casual Leave (CL): 6 days/year. Available from Day 1. For short unplanned absences.
+- During probation: minimize non-essential leave.
+ 
+=== CLICKTIGER LEAVE POLICY 2026 (HR/1/KIAH) ===
+Company: Clicktiger Technology Solutions LLP | Email: clicktigerindia@gmail.com | Phone: +91 9650714583
+All leave calculated January–December, prorated for mid-year joiners.
+ 
+Privilege Leave (PL): 12 days/year.
+- Carry forward max 24 days. Excess lapses.
+- Must apply in advance (except emergencies).
+- NOT available during probation.
+- Only PL is encashable at separation. CL and SL are not encashable.
+ 
+Sick Leave (SL): 6 days/year.
+- No prior approval needed for sudden illness; inform manager ASAP.
+- Medical certificate required if SL exceeds 2 consecutive days.
+- Cannot be carried forward. Lapses at year-end.
+- Available as full or half day.
+ 
+Casual Leave (CL): 6 days/year.
+- Apply in advance where possible.
+- Cannot be carried forward. Lapses at year-end.
+- Available as full or half day.
+ 
+Maternity Leave (Clicktiger):
+- Eligibility: 90 days of service in the 12 months before expected delivery.
+- 26 weeks (6 months) paid for 1st/2nd child. Up to 8 weeks pre-delivery.
+- 12 weeks (3 months) if employee has 2 or more surviving children.
+- Notice: Inform supervisor at least 8 weeks before expected delivery.
+- Paid at basic salary.
+- Miscarriage/medical complications: 6 weeks paid leave.
+ 
+Paternity Leave: 5 days paid, must be taken within 6 months of birth. Paid at full basic salary.
+ 
+Leave Without Pay (LWP):
+- For employees who have exhausted leave balance.
+- Needs formal approval from reporting manager AND HR department.
+- No salary paid during LWP.
+- If LWP exceeds 1 month, certain benefits may be reviewed.
+- Unapproved LWP = policy violation and may result in disciplinary action.
+ 
+Half-Day Leave:
+- Requires prior manager approval.
+- Can be morning (first half) or afternoon (second half).
+- Deducted from PL or SL. If no balance → treated as LWP.
+- Frequent half-day leave may be reviewed.
+ 
+Leave Application Procedure:
+- Planned leave: Apply at least 7 days in advance.
+- Unplanned leave: Inform manager within 2 hours of scheduled start time.
+ 
+Leave Abuse: Frequent short leaves without valid reason may result in disciplinary action.
+ 
+On Resignation/Termination: Unused PL may be encashed where legally applicable. CL and SL are not encashable.
+ 
+Policy last revised: 16 December 2025.`;
+ 
+let history = [];
+let busy = false;
+ 
+function addMsg(text, isUser, isErr) {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div');
+  row.className = 'row' + (isUser ? ' u' : '');
+ 
+  const av = document.createElement('div');
+  av.className = 'av-sm ' + (isUser ? 'ua' : 'b');
+  av.textContent = isUser ? 'ME' : 'AI';
+ 
+  const bbl = document.createElement('div');
+  bbl.className = 'bubble ' + (isErr ? 'err' : isUser ? 'u' : 'b');
+  bbl.textContent = text;
+ 
+  row.appendChild(av);
+  row.appendChild(bbl);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+ 
+function showTyping() {
+  const msgs = document.getElementById('msgs');
+  const row = document.createElement('div');
+  row.className = 'row'; row.id = 'typing-row';
+  const av = document.createElement('div');
+  av.className = 'av-sm b'; av.textContent = 'AI';
+  const bbl = document.createElement('div');
+  bbl.className = 'bubble b';
+  bbl.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  row.appendChild(av); row.appendChild(bbl);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+ 
+function removeTyping() {
+  const el = document.getElementById('typing-row');
+  if (el) el.remove();
+}
+ 
+async function send(text) {
+  const inp = document.getElementById('inp');
+  const btn = document.getElementById('sendBtn');
+  const msg = (text !== undefined ? text : inp.value).trim();
+  if (!msg || busy) return;
+ 
+  busy = true;
+  btn.disabled = true;
+  if (text === undefined) { inp.value = ''; inp.style.height = 'auto'; }
+ 
+  addMsg(msg, true);
+  history.push({ role: 'user', content: msg });
+  showTyping();
+ 
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYS,
+        messages: history
+      })
+    });
+ 
+    const data = await res.json();
+    removeTyping();
+ 
+    if (data.error) {
+      addMsg('Error: ' + data.error.message, false, true);
+    } else {
+      const reply = data.content?.[0]?.text || 'No response. Please try again.';
+      addMsg(reply, false);
+      history.push({ role: 'assistant', content: reply });
+    }
+  } catch (e) {
+    removeTyping();
+    addMsg('Error: ' + e.message, false, true);
+  }
+ 
+  busy = false;
+  btn.disabled = false;
+  inp.focus();
+}
+ 
+function quickAsk(q) { send(q); }
+ 
+const inp = document.getElementById('inp');
+inp.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+inp.addEventListener('input', () => {
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 96) + 'px';
+});
+ 
+// Welcome message
+addMsg("Hi! I'm ARIA, your Suntek AI HR Assistant 👋\n\nI can help you with:\n• Leave policy (PL, SL, CL, LWP)\n• Onboarding steps & payroll\n• Expense claim process\n• Maternity & paternity benefits\n\nWhat would you like to know?", false);
+</script>
+</body>
+</html>
+ 
